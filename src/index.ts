@@ -22,18 +22,37 @@ const app = new App({
   clientSecret: process.env.CLIENT_SECRET
 });
 
-app.shortcut('reply', async ({ message, user, ack }) => {
-  if (message) {
-    const messages = await app.api.messages.getByChatId(message.chat_id, {
-      size: 3
-    });
+app.shortcut('reply', async ({ ack }) => {
+  ack();
+});
 
+app.shortcut('draft', async ({ chat, user, ack }) => {
+  let messages = await app.api.messages.getByChatId(chat.id, {
+    size: 3
+  });
+
+  messages = messages.filter(m => !!m.body.text);
+
+  if (messages.length > 0) {
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      messages: messages[user.id] || []
+      messages: [
+        {
+          role: 'system',
+          content: 'You are me, a user chatting with someone, and you should reply as if you were me.'
+        },
+        ...messages.map(m => ({
+          role: m.created_for.id === user.id ? 'assistant' : 'user',
+          content: m.body.text!
+        }) as OpenAI.ChatCompletionMessage)
+      ]
     });
 
-
+    if (completion.choices.length > 0 && completion.choices[0].message.content) {
+      await app.api.messages.createFor(user.name, chat.id, {
+        text: completion.choices[0].message.content
+      });
+    }
   }
 
   ack();
