@@ -1,0 +1,24 @@
+{
+	"icon_url": "https://chatgptaihub.com/wp-content/uploads/2023/06/ChatGPT-logo-with-color-Background.png",
+	"name": "chatgpt",
+	"display_name": "Chat GPT",
+	"description": "a conversational AI app",
+	"scopes": [
+    "messages:read",
+    "messages:write"
+  ],
+	"events": [],
+	"shortcuts": {
+    "draft": {
+      "type": "chat",
+      "name": "Draft",
+      "description": "draft a new message"
+    },
+		"reply": {
+			"type": "message",
+			"name": "Reply",
+			"description": "reply to a message"
+		}
+	},
+	"link_domains": []
+}
