@@ -26,12 +26,14 @@ app.shortcut('reply', async ({ ack }) => {
   ack();
 });
 
-app.shortcut('draft', async ({ chat, user, ack }) => {
+app.shortcut('draft', async ({ chat, user, draft, ack }) => {
   let messages = await app.api.messages.getByChatId(chat.id, {
     size: 3
   });
 
   messages = messages.filter(m => !!m.body.text);
+
+  console.log(draft);
 
   if (messages.length > 0) {
     const completion = await openai.chat.completions.create({
