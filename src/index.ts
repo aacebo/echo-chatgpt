@@ -26,18 +26,17 @@ app.shortcut('reply', async ({ ack }) => {
   ack();
 });
 
-app.shortcut('draft', async ({ chat, user, draft, ack }) => {
+app.shortcut('draft', async ({ chat, user, ack }) => {
   let messages = await app.api.messages.getByChatId(chat.id, {
     size: 3
   });
 
   messages = messages.filter(m => !!m.body.text);
 
-  console.log(draft);
-
   if (messages.length > 0) {
-    const completion = await openai.chat.completions.create({
+    const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
+      stream: true,
       messages: [
         {
           role: 'system',
@@ -50,10 +49,18 @@ app.shortcut('draft', async ({ chat, user, draft, ack }) => {
       ]
     });
 
-    if (completion.choices.length > 0 && completion.choices[0].message.content) {
-      await app.api.messages.createFor(user.name, chat.id, {
-        text: completion.choices[0].message.content
-      });
+    let content = '';
+
+    for await (const part of stream) {
+      const delta = part.choices[0]?.delta?.content;
+
+      if (delta) {
+        content += delta;
+
+        await app.api.views.chats.draft(user.name, chat.id, {
+          text: content
+        });
+      }
     }
   }
 
