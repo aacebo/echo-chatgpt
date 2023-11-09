@@ -67,4 +67,12 @@ app.shortcut('draft', async ({ chat, user, ack }) => {
   ack();
 });
 
+// app.shortcut('translate', async ({ message, user, ack }) => {
+//   if (message) {
+
+//   }
+
+//   ack();
+// });
+
 app.start();
