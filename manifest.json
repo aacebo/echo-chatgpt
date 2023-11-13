@@ -7,7 +7,7 @@
     "messages:read",
     "messages:write"
   ],
-	"events": [],
+	"events": ["message"],
 	"shortcuts": {
     "draft": {
       "type": "chat",

@@ -22,6 +22,21 @@ const app = new App({
   clientSecret: process.env.CLIENT_SECRET
 });
 
+app.event('message', async ({ event, ack }) => {
+  // if dm to app user
+  if (
+    event.body.chat.type == 'direct' &&
+    event.body.chat.members.find(m => m.id == app.me.id) &&
+    event.body.message.body.text
+  ) {
+    await app.api.messages.create(event.body.chat.id, {
+      text: 'Hello, how can I help you?'
+    });
+  }
+
+  ack();
+});
+
 app.shortcut('reply', async ({ ack }) => {
   ack();
 });
