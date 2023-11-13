@@ -25,7 +25,7 @@ const app = new App({
 app.event('message', async ({ event, ack }) => {
   // if dm to app user
   if (
-    event.body.chat.type == 'direct' &&
+    event.body.chat.type === 'direct' &&
     event.body.chat.members.find(m => m.id == app.me.id) &&
     event.body.message.body.text
   ) {
