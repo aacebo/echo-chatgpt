@@ -29,6 +29,7 @@ app.event('message', async ({ event, ack }) => {
     event.body.chat.members.find(m => m.id == app.me.id) &&
     event.body.message.body.text
   ) {
+    await app.api.chats.typing(event.body.chat.id);
     await app.api.messages.create(event.body.chat.id, {
       text: 'Hello, how can I help you?'
     });

@@ -9,6 +9,7 @@
     "assistant"
   ],
   "scopes": [
+    "chats:write",
     "messages:read",
     "messages:write"
   ],
