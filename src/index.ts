@@ -1,4 +1,4 @@
-import { App } from '@aacebo/echo';
+import { App, models } from '@aacebo/echo';
 import OpenAI from 'openai';
 
 if (!process.env.CLIENT_ID) {
@@ -35,8 +35,9 @@ app.event('message', async ({ event, ack }) => {
       size: 3
     });
 
-    const completion = await openai.chat.completions.create({
+    const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
+      stream: true,
       messages: [
         {
           role: 'system',
@@ -49,9 +50,26 @@ app.event('message', async ({ event, ack }) => {
       ]
     });
 
-    await app.api.messages.create(event.body.chat.id, {
-      text: completion.choices[0].message.content || 'no response...'
-    });
+    let content = '';
+    let message: models.Message | undefined = undefined;
+
+    for await (const part of stream) {
+      const delta = part.choices[0]?.delta?.content;
+
+      if (delta) {
+        content += delta;
+
+        if (!message) {
+          message = await app.api.messages.create(event.body.chat.id, {
+            text: content
+          });
+        } else {
+          message = await app.api.messages.update(message.id, {
+            text: content
+          });
+        }
+      }
+    }
   }
 
   ack();
