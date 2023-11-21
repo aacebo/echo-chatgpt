@@ -26,6 +26,11 @@
       "type": "message",
       "name": "Reply",
       "description": "reply to a message"
+    },
+    "translate": {
+      "type": "message",
+      "name": "Translate",
+      "description": "translate to your locale"
     }
   },
   "link_domains": []

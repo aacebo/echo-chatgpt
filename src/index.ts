@@ -118,12 +118,42 @@ app.shortcut('draft', async ({ chat, user, ack }) => {
   ack();
 });
 
-// app.shortcut('translate', async ({ message, user, ack }) => {
-//   if (message) {
+app.shortcut('translate', async ({ message, user, ack }) => {
+  if (message) {
+    const stream = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      stream: true,
+      temperature: 0,
+      messages: [
+        {
+          role: 'user',
+          content: `translate the text "${message.body.text}" to the language of code "${user.locale}"`
+        }
+      ]
+    });
 
-//   }
+    let content = '';
 
-//   ack();
-// });
+    for await (const part of stream) {
+      const delta = part.choices[0]?.delta?.content;
+
+      if (delta) {
+        content += delta;
+
+        await app.api.messages.extend(message.id, {
+          body: {
+            type: 'container',
+            child: {
+              type: 'text',
+              text: content
+            }
+          }
+        });
+      }
+    }
+  }
+
+  ack();
+});
 
 app.start();
