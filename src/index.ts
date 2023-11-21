@@ -66,8 +66,6 @@ app.shortcut('draft', async ({ chat, user, ack }) => {
     size: 3
   });
 
-  messages = messages.filter(m => !!m.body.text);
-
   if (messages.length > 0) {
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
@@ -77,10 +75,10 @@ app.shortcut('draft', async ({ chat, user, ack }) => {
           role: 'system',
           content: 'You are me, a user chatting with someone, and you should reply as if you were me.'
         },
-        ...messages.map(m => ({
-          role: m.created_for.id === user.id ? 'assistant' : 'user',
+        ...messages.filter(m => !!m.body.text).map(m => ({
+          role: m.created_by.id === app.me.id ? 'assistant' : 'user',
           content: m.body.text!
-        }) as OpenAI.ChatCompletionMessage)
+        }) as OpenAI.ChatCompletionMessage).reverse()
       ]
     });
 
