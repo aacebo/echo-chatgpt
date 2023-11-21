@@ -30,8 +30,27 @@ app.event('message', async ({ event, ack }) => {
     event.body.message.body.text
   ) {
     await app.api.chats.typing(event.body.chat.id);
+
+    let messages = await app.api.messages.getByChatId(event.body.chat.id, {
+      size: 3
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a chat assistant chatting with someone.'
+        },
+        ...messages.filter(m => !!m.body.text).map(m => ({
+          role: m.created_for.id === event.sent_by?.id ? 'user' : 'assistant',
+          content: m.body.text!
+        }) as OpenAI.ChatCompletionMessage).reverse()
+      ]
+    });
+
     await app.api.messages.create(event.body.chat.id, {
-      text: 'Hello, how can I help you?'
+      text: completion.choices[0].message.content || 'no response...'
     });
   }
 
