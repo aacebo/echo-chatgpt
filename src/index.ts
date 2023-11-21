@@ -127,7 +127,7 @@ app.shortcut('translate', async ({ message, user, ack }) => {
       messages: [
         {
           role: 'user',
-          content: `translate the text "${message.body.text}" to the language of code "${user.locale}"`
+          content: `translate the text "${message.body.text}" to the language of IETF code "${user.locale}"`
         }
       ]
     });
@@ -144,8 +144,8 @@ app.shortcut('translate', async ({ message, user, ack }) => {
           body: {
             type: 'container',
             child: {
-              type: 'text',
-              text: content
+              type: 'markdown',
+              text: `> ${content}`
             }
           }
         });
