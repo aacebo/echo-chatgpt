@@ -75,7 +75,7 @@ app.event('message', async ({ event, ack }) => {
   ack();
 });
 
-app.shortcut('reply', async ({ chat, message, user, ack }) => {
+app.shortcut('reply', async ({ message, ack }) => {
   if (message) {
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
@@ -93,6 +93,7 @@ app.shortcut('reply', async ({ chat, message, user, ack }) => {
     });
 
     let content = '';
+    let newMessage: models.Message | undefined = undefined;
 
     for await (const part of stream) {
       const delta = part.choices[0]?.delta?.content;
@@ -100,9 +101,15 @@ app.shortcut('reply', async ({ chat, message, user, ack }) => {
       if (delta) {
         content += delta;
 
-        await app.api.views.chats.draft(user.name, chat.id, {
-          text: content
-        });
+        if (!newMessage) {
+          newMessage = await app.api.messages.reply(message.id, {
+            text: content
+          });
+        } else {
+          newMessage = await app.api.messages.update(newMessage.id, {
+            text: content
+          });
+        }
       }
     }
   }
