@@ -1,0 +1,6 @@
+services:
+  - type: worker
+    name: chatgpt
+    runtime: node
+    plan: standard
+    buildCommand: npm run build
