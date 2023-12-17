@@ -157,7 +157,7 @@ app.shortcut('draft', async ({ chat, user, ack }) => {
 });
 
 app.shortcut('translate', async ({ message, user, ack }) => {
-  if (message) {
+  if (message && message.body.text) {
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       stream: true,
