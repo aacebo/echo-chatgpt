@@ -1,8 +1,8 @@
-import { App, models } from '@aacebo/echo';
+import { App, ShortcutHandlerArgs, models } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function reply(app: App, openai: OpenAI) {
-  return async ({ message, ack }: { message: models.Message | null, ack: () => void }) => {
+  return async ({ message, ack }: ShortcutHandlerArgs) => {
     if (!message) {
       return ack();
     }

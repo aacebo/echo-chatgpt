@@ -1,8 +1,8 @@
-import { App, models } from '@aacebo/echo';
+import { App, ShortcutHandlerArgs } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function translate(app: App, openai: OpenAI) {
-  return async ({ message, user, ack }: { message: models.Message | null, user: models.User, ack: () => void }) => {
+  return async ({ message, user, ack }: ShortcutHandlerArgs) => {
     if (!message?.body.text) {
       return ack();
     }
