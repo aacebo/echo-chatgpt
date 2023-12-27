@@ -12,7 +12,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p .",
+    "clean": "npx rimraf dist",
+    "build": "npm run clean && tsc -p .",
     "start": "DEBUG=echo* node -r dotenv/config .",
     "debug": "DEBUG=echo* NODE_OPTIONS=\"-r dotenv/config\" npx ts-node --skipProject src/index.ts"
   },
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.5.1",
+    "rimraf": "^5.0.5",
     "typescript": "^5.1.6"
   }
 }
