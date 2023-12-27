@@ -1,8 +1,8 @@
-import { App, ShortcutHandlerArgs, models } from '@aacebo/echo';
+import { App, ShortcutHandlerArgs } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function reply(app: App, openai: OpenAI) {
-  return async ({ message, ack }: ShortcutHandlerArgs['message']) => {
+  return async ({ chat, message, user, ack }: ShortcutHandlerArgs['message']) => {
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       stream: true,
@@ -19,7 +19,6 @@ export function reply(app: App, openai: OpenAI) {
     });
 
     let content = '';
-    let newMessage: models.Message | undefined = undefined;
 
     for await (const part of stream) {
       const delta = part.choices[0]?.delta?.content;
@@ -27,15 +26,9 @@ export function reply(app: App, openai: OpenAI) {
       if (delta) {
         content += delta;
 
-        if (!newMessage) {
-          newMessage = await app.api.messages.reply(message.id, {
-            text: content
-          });
-        } else {
-          newMessage = await app.api.messages.update(newMessage.id, {
-            text: content
-          });
-        }
+        await app.api.views.chats.draft(user.name, chat.id, {
+          text: content
+        });
       }
     }
 
