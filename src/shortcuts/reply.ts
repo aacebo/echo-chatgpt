@@ -2,11 +2,7 @@ import { App, ShortcutHandlerArgs, models } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function reply(app: App, openai: OpenAI) {
-  return async ({ message, ack }: ShortcutHandlerArgs) => {
-    if (!message) {
-      return ack();
-    }
-
+  return async ({ message, ack }: ShortcutHandlerArgs['message']) => {
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       stream: true,

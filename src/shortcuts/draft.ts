@@ -2,7 +2,7 @@ import { App, ShortcutHandlerArgs } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function draft(app: App, openai: OpenAI) {
-  return async ({ chat, user, ack }: ShortcutHandlerArgs) => {
+  return async ({ chat, user, ack }: ShortcutHandlerArgs['chat']) => {
     let messages = await app.api.messages.getByChatId(chat.id, {
       size: 3
     });

@@ -2,8 +2,8 @@ import { App, ShortcutHandlerArgs } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function translate(app: App, openai: OpenAI) {
-  return async ({ message, user, ack }: ShortcutHandlerArgs) => {
-    if (!message?.body.text) {
+  return async ({ message, user, ack }: ShortcutHandlerArgs['message']) => {
+    if (!message.body.text) {
       return ack();
     }
 

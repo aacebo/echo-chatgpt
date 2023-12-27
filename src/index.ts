@@ -26,7 +26,7 @@ const app = new App({
 });
 
 app.event('message', events.message(app, openai));
-app.shortcut('reply', shortcuts.reply(app, openai));
+app.shortcut<'message'>('reply', shortcuts.reply(app, openai));
 app.shortcut('draft', shortcuts.draft(app, openai));
-app.shortcut('translate', shortcuts.translate(app, openai));
+app.shortcut<'message'>('translate', shortcuts.translate(app, openai));
 app.start();
