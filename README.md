@@ -6,3 +6,4 @@ ChatGPT is a powerful AI language model developed by OpenAI. It's designed for n
 
 - draft a new message
 - reply to a message
+- translate a message to your locale
