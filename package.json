@@ -18,7 +18,7 @@
     "debug": "DEBUG=echo* NODE_OPTIONS=\"-r dotenv/config\" npx ts-node --skipProject src/index.ts"
   },
   "dependencies": {
-    "@aacebo/echo": "^0.0.34",
+    "@aacebo/echo": "^0.0.35",
     "dotenv": "^16.3.1",
     "openai": "^4.15.4"
   },
