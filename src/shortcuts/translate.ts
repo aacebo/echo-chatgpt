@@ -29,11 +29,8 @@ export function translate(app: App, openai: OpenAI) {
 
         await app.api.messages.extend(message.id, {
           body: {
-            type: 'container',
-            child: {
-              type: 'markdown',
-              text: `> ${content}`
-            }
+            type: 'markdown',
+            text: `> ${content}`
           }
         });
       }
