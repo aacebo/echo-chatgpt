@@ -2,7 +2,7 @@ import { App, ShortcutHandlerArgs } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function reply(app: App, openai: OpenAI) {
-  return async ({ chat, message, user, ack }: ShortcutHandlerArgs['message']) => {
+  return async ({ session_id, chat, message, ack }: ShortcutHandlerArgs['message']) => {
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       stream: true,
@@ -26,7 +26,7 @@ export function reply(app: App, openai: OpenAI) {
       if (delta) {
         content += delta;
 
-        await app.api.views.chats.draft(user.name, chat.id, {
+        await app.api.views.chats.draft(session_id, chat.id, {
           text: content
         });
       }

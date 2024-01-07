@@ -2,7 +2,7 @@ import { App, ShortcutHandlerArgs } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function draft(app: App, openai: OpenAI) {
-  return async ({ chat, user, ack }: ShortcutHandlerArgs['chat']) => {
+  return async ({ session_id, chat, ack }: ShortcutHandlerArgs['chat']) => {
     let messages = await app.api.messages.getByChatId(chat.id, {
       size: 3
     });
@@ -31,7 +31,7 @@ export function draft(app: App, openai: OpenAI) {
         if (delta) {
           content += delta;
 
-          await app.api.views.chats.draft(user.name, chat.id, {
+          await app.api.views.chats.draft(session_id, chat.id, {
             text: content
           });
         }
