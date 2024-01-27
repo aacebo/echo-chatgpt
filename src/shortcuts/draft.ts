@@ -2,7 +2,7 @@ import { App, ShortcutHandlerArgs } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function draft(app: App, openai: OpenAI) {
-  return async ({ session_id, chat, draft, ack }: ShortcutHandlerArgs['chat']) => {
+  return async ({ session_id, chat, user, draft, ack }: ShortcutHandlerArgs['chat']) => {
     let messages = await app.api.messages.getByChatId(chat.id, {
       size: 10
     });
@@ -23,7 +23,7 @@ export function draft(app: App, openai: OpenAI) {
             content: draft
           },
           ...messages.reverse().map(m => ({
-            role: m.created_by.id === app.me.id ? 'assistant' : 'user',
+            role: m.created_for.id === user.id ? 'user' : 'assistant',
             content: m.body.text!
           }) as OpenAI.ChatCompletionMessage)
         ]
