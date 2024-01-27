@@ -2,10 +2,16 @@ import { App, ShortcutHandlerArgs } from '@aacebo/echo';
 import { OpenAI } from 'openai';
 
 export function draft(app: App, openai: OpenAI) {
-  return async ({ session_id, chat, ack }: ShortcutHandlerArgs['chat']) => {
+  return async ({ session_id, chat, draft, ack }: ShortcutHandlerArgs['chat']) => {
     let messages = await app.api.messages.getByChatId(chat.id, {
-      size: 3
+      size: 10
     });
+
+    messages = messages.filter(m => !!m.body.text);
+
+    if (messages.length > 3) {
+      messages = messages.slice(0, 3);
+    }
 
     if (messages.length > 0) {
       const stream = await openai.chat.completions.create({
@@ -14,12 +20,12 @@ export function draft(app: App, openai: OpenAI) {
         messages: [
           {
             role: 'system',
-            content: 'You are me, a user chatting with someone, and you should reply as if you were me.'
+            content: draft
           },
-          ...messages.filter(m => !!m.body.text).map(m => ({
+          ...messages.reverse().map(m => ({
             role: m.created_by.id === app.me.id ? 'assistant' : 'user',
             content: m.body.text!
-          }) as OpenAI.ChatCompletionMessage).reverse()
+          }) as OpenAI.ChatCompletionMessage)
         ]
       });
 
