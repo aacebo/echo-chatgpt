@@ -24,7 +24,7 @@ export function draft(app: App, openai: OpenAI) {
           },
           ...messages.reverse().map(m => ({
             role: m.created_for.id === user.id ? 'user' : 'assistant',
-            content: m.body.text!
+            content: m.body.text
           }) as OpenAI.ChatCompletionMessage)
         ]
       });
