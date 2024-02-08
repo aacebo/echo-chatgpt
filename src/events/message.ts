@@ -18,6 +18,7 @@ export function message(app: App, openai: OpenAI) {
       const stream = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         stream: true,
+        temperature: 0,
         messages: [
           {
             role: 'system',
