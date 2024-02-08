@@ -21,7 +21,7 @@ export function draft(app: App, openai: OpenAI) {
         messages: [
           {
             role: 'system',
-            content: draft || ''
+            content: draft ?? ''
           },
           ...messages.reverse().map(m => ({
             role: m.created_for.id === user.id ? 'user' : 'assistant',
